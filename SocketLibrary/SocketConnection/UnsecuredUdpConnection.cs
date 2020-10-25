@@ -7,7 +7,7 @@ using SocketLibrary.Messages;
 
 namespace SocketLibrary.SocketConnection
 {
-    class UnsecuredUdpConnection : ISocketConnection
+    public class UnsecuredUdpConnection : ISocketConnection
     {
         private readonly UdpClient _udpClient;
         private readonly bool _debug;
@@ -36,7 +36,9 @@ namespace SocketLibrary.SocketConnection
                 var receivedBytes = _udpClient.EndReceive(ar, ref receivedIpEndPoint);
                 var message = Serializer.Deserialize<Message>(receivedBytes);
                 var content = Serializer.DeserializeType(message.content, message.ContentType);
-                OnMessageReceived?.Invoke(this, new SocketEventArgs(receivedIpEndPoint, content));
+
+                var eventans = new SocketEventArgs(receivedIpEndPoint, content);
+                OnMessageReceived?.Invoke(this, eventans);
             }
             catch (SocketException e)
             {
