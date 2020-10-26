@@ -12,7 +12,7 @@ namespace Server
     {
         static void Main(string[] args)
         {
-            var connection = new UnsecuredUdpConnection(51000);
+            var connection = new UnsecuredUdpConnection(51000, true);
             connection.OnMessageReceived += Test;
             Console.ReadKey();
         }

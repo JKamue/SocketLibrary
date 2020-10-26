@@ -6,6 +6,7 @@ using SocketLibrary.Messages;
 namespace SharedCode
 {
     [Serializable]
+    [PacketDescription("Text Packet", "Simple Packet transferring text")]
     public class Text : Packet
     {
         public string Content;

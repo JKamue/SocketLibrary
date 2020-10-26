@@ -37,8 +37,17 @@ namespace SocketLibrary.SocketConnection
                 var message = Serializer.Deserialize<Message>(receivedBytes);
                 var content = Serializer.DeserializeType(message.content, message.ContentType);
 
+                if (_debug)
+                {
+                    var packet = (Packet)content;
+                    Console.WriteLine($"Received from {receivedIpEndPoint}: \t{packet.Title} - {packet.Description}");
+                }
+
                 var eventans = new SocketEventArgs(receivedIpEndPoint, content);
                 OnMessageReceived?.Invoke(this, eventans);
+
+
+                    
             }
             catch (SocketException e)
             {
