@@ -9,7 +9,7 @@ namespace SocketLibrary.SocketConnection
     public interface ISocketConnection
     {
         event EventHandler<SocketEventArgs> OnMessageReceived;
-        void Send(IPacket obj, IPEndPoint recipient);
+        void Send(Packet obj, IPEndPoint recipient);
         void Close();
     }
 }

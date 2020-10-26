@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace SocketLibrary.Messages
 {
-    public interface IPacket
+    [Serializable]
+    public abstract class Packet
     {
     }
 }

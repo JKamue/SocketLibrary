@@ -16,7 +16,7 @@ namespace SocketLibrary.Messages
             this.content = content;
         }
 
-        internal static Message Create(IPacket obj)
+        internal static Message Create(Packet obj)
         {
             return new Message(obj.GetType(), Serializer.Serialize(obj));
         }

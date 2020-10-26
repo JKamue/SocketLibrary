@@ -20,7 +20,7 @@ namespace SocketLibrary.SocketConnection
         }
 
         public event EventHandler<SocketEventArgs> OnMessageReceived;
-        public void Send(IPacket obj, IPEndPoint recipient)
+        public void Send(Packet obj, IPEndPoint recipient)
         {
             var message = Message.Create(obj);
             var content = Serializer.Serialize(message);

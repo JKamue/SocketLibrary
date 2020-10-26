@@ -6,7 +6,7 @@ using SocketLibrary.Messages;
 namespace SharedCode
 {
     [Serializable]
-    public class OtherType : IPacket
+    public class OtherType : Packet
     {
         public bool Status;
 
