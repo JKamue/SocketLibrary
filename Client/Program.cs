@@ -21,6 +21,9 @@ namespace Client
             connection.Send(new OtherType(true), recipient);
             connection.Send(new Text("Second text"), recipient);
             connection.Send(new OtherType(false), recipient);
+
+            // Send a packet the server doesnt know
+            connection.Send(new BadPacket(42), recipient);
             Console.ReadKey();
         }
     }

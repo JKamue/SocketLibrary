@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -16,7 +17,7 @@ namespace SocketLibrary.SocketConnection
         {
             _udpClient = new UdpClient(myPort);
             _debug = debug;
-            _udpClient.BeginReceive(DataReceived, _udpClient);
+            BeginReceive();
         }
 
         public event EventHandler<SocketEventArgs> OnMessageReceived;
@@ -27,6 +28,18 @@ namespace SocketLibrary.SocketConnection
             _udpClient.Send(content, content.Length, recipient);
         }
 
+        private void BeginReceive()
+        {
+            try
+            {
+                _udpClient.BeginReceive(DataReceived, _udpClient);
+            }
+            catch (SocketException e)
+            {
+                Log($"Could not start listening to packets");
+            }
+        }
+
         private void DataReceived(IAsyncResult ar)
         {
             IPEndPoint receivedIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -34,7 +47,9 @@ namespace SocketLibrary.SocketConnection
             try
             {
                 var receivedBytes = _udpClient.EndReceive(ar, ref receivedIpEndPoint);
+
                 var message = Serializer.Deserialize<Message>(receivedBytes);
+
                 var content = Serializer.DeserializeType(message.content, message.ContentType);
 
                 if (_debug)
@@ -54,15 +69,13 @@ namespace SocketLibrary.SocketConnection
                 Log("Receive Error: " + e.Message);
                 return;
             }
+            catch (FileNotFoundException e)
+            {
+                Log($"Received from {receivedIpEndPoint}: \tUnknown, not deserializable packet");
+                BeginReceive();
+            }
 
-            try
-            {
-                _udpClient.BeginReceive(DataReceived, _udpClient);
-            }
-            catch (SocketException e)
-            {
-                Log($"Could not restart listening to packets");
-            }
+            BeginReceive();
         }
 
         private void Log(string mes)
