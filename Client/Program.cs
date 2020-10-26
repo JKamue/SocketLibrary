@@ -13,7 +13,7 @@ namespace Client
     {
         static void Main(string[] args)
         {
-            var connection = new UnsecuredUdpConnection(51001);
+            var connection = new UnsecuredUdpConnection(51001, true);
             var serverAddress = IPAddress.Parse("127.0.0.1");
             var recipient = new IPEndPoint(serverAddress, 51000);
 

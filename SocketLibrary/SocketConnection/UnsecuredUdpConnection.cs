@@ -43,20 +43,32 @@ namespace SocketLibrary.SocketConnection
                     Console.WriteLine($"Received from {receivedIpEndPoint}: \t{packet.Title} - {packet.Description}");
                 }
 
-                var eventans = new SocketEventArgs(receivedIpEndPoint, content);
-                OnMessageReceived?.Invoke(this, eventans);
-
-
-                    
+                OnMessageReceived?.Invoke(this, new SocketEventArgs(receivedIpEndPoint, content));
             }
             catch (SocketException e)
             {
+                Log("Receive error: " + e.Message);
             }
             catch (ObjectDisposedException e)
             {
+                Log("Receive Error: " + e.Message);
+                return;
             }
 
-            _udpClient.BeginReceive(DataReceived, _udpClient);
+            try
+            {
+                _udpClient.BeginReceive(DataReceived, _udpClient);
+            }
+            catch (SocketException e)
+            {
+                Log($"Could not restart listening to packets");
+            }
+        }
+
+        private void Log(string mes)
+        {
+            if (_debug)
+                Console.WriteLine(mes);
         }
 
         public void Close()
