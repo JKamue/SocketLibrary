@@ -11,6 +11,7 @@ Here we are going to create classes implementing IPacket. These classes will be 
 One example class only containing text:
 ```cs
 [Serializable]
+[PacketDescription("Text Packet", "Simple Packet transferring text")]
 public class Text : IPacket
 {
   public string Content;
@@ -21,6 +22,7 @@ public class Text : IPacket
   }
 }
 ```
+The PacketDescription tag is optional. If set it provides the additional information in the console when debugging is enabled.
 
 ### Client code
 The client is a simple console project. It is going to create a new instance of the text class and will send it to the server:
