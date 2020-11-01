@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using SocketLibrary.Messages;
@@ -21,16 +22,15 @@ namespace SocketLibrary.Encryption
             return new AesEncryptionProvider(Aes.Create());
         }
 
-        public static AesEncryptionProvider Create(byte[] key, byte[] iv)
+        public static AesEncryptionProvider Create(AesKeyPair pair)
         {
             var aes = Aes.Create();
-            aes.Key = key;
-            aes.IV = iv;
+            aes.Key = pair.Key;
+            aes.IV = pair.Iv;
             return new AesEncryptionProvider(aes);
         }
 
-        public byte[] ExportKey() => _aes.Key;
-        public byte[] ExportIv() => _aes.IV;
+        public AesKeyPair Export() => new AesKeyPair(_aes.Key, _aes.IV);
 
         private byte[] PerformCryptography(ICryptoTransform cryptoTransform, byte[] data)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using SocketLibrary.Encryption;
 using SocketLibrary.Messages;
@@ -12,23 +13,29 @@ namespace SocketLibrary.SocketConnection
     public sealed class SecuredUdpConnection
     {
         private readonly UdpClient _udpClient;
-        private readonly AesEncryptionProvider _encryptionProvider;
+        private readonly Dictionary<IPEndPoint, IEncryptionProvider> _encryptionProviders = new Dictionary<IPEndPoint, IEncryptionProvider>();
         private readonly bool _debug;
+        private readonly bool _server;
 
-        public SecuredUdpConnection(int myPort, AesEncryptionProvider encryptionProvider, bool debug = false)
+        public SecuredUdpConnection(int myPort, bool server = false, bool debug = false)
         {
             _udpClient = new UdpClient(myPort);
-            _encryptionProvider = encryptionProvider;
             _debug = debug;
+            _server = server;
             BeginReceive();
         }
 
         public event EventHandler<SocketEventArgs> OnMessageReceived;
+
         public void Send(Packet obj, IPEndPoint recipient)
         {
             var message = Message.Create(obj);
             var content = Serializer.Serialize(message);
-            var enc = _encryptionProvider.Encrypt(content);
+
+            if (!_encryptionProviders.ContainsKey(recipient))
+                return;
+
+            var enc = _encryptionProviders[recipient].Encrypt(content);
             _udpClient.Send(enc, enc.Length, recipient);
         }
 
@@ -47,11 +54,17 @@ namespace SocketLibrary.SocketConnection
         private void DataReceived(IAsyncResult ar)
         {
             IPEndPoint receivedIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            if (!_encryptionProviders.ContainsKey(receivedIpEndPoint))
+            {
+                Log($"Receive error {receivedIpEndPoint}: \tNo encrypted connection present");
+                BeginReceive();
+                return;
+            }
 
             try
             {
                 var receivedBytes = _udpClient.EndReceive(ar, ref receivedIpEndPoint);
-                var dec = _encryptionProvider.Decrypt(receivedBytes);
+                var dec = _encryptionProviders[receivedIpEndPoint].Decrypt(receivedBytes);
 
                 var message = Serializer.Deserialize<Message>(dec);
 

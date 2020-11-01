@@ -27,10 +27,23 @@ namespace Server
 
         static void Main(string[] args)
         {
+            var server = new TcpEncryptionEstablisher(52000);
+            Console.WriteLine("hi");
+            var key = TcpEncryptionEstablisher.EstablishEncryption(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 52000));
+            Console.ReadKey();
+            return;
+            var provider = new RsaEncryptionProvider();
+            var mes = StringToByteArray("test test test 123");
+            var publicKey = provider.PublicKey;
+            var encrypted = RsaEncryptionProvider.Encrypt(mes, publicKey);
+            var decrypted = provider.Decrypt(encrypted);
+            Console.WriteLine(ByteArrayToString(decrypted));
+            Console.ReadKey();
+            return;
             var encryption = AesEncryptionProvider.Create();
             var test = "testetsetws12412";
             var enc =encryption.Encrypt(StringToByteArray(test));
-            var decryption = AesEncryptionProvider.Create(encryption.ExportKey(), encryption.ExportIv());
+            //var decryption = AesEncryptionProvider.Create(encryption.ExportKey(), encryption.ExportIv());
             var dec = ByteArrayToString(encryption.Decrypt(enc));
             Console.WriteLine(dec);
             Console.ReadKey();
