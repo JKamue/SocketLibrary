@@ -1,6 +1,11 @@
 # SocketLibrary
 Simple library for socket communication
 
+# Installation
+The library is available on <a href="https://www.nuget.org/packages/JKamue.SocketLibrary/">nuget</a>.
+
+You can download it or install it over the console ```Install-Package JKamue.SocketLibrary -Version 1.1.0```
+
 # Usage
 This is a basic example of client server communication. It made up of 3 seperate projects. All of the project will need SocketLibrary added as a reference.
 You can find the full code in the example folder of the solution.
