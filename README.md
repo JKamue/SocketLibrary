@@ -17,7 +17,7 @@ One example class only containing text:
 ```cs
 [Serializable]
 [PacketDescription("Text Packet", "Simple Packet transferring text")]
-public class Text : IPacket
+public class Text : Packet
 {
   public string Content;
 
